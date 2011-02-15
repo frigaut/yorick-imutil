@@ -1,9 +1,9 @@
 /*
  * Author: Francois Rigaut
- * 
+ *
  * check file for imutil
  *
- * Copyright (c) 2003-2007, Francois Rigaut
+ * Copyright (c) 2003-2011, Francois Rigaut
  *
  * This program is free software; you can redistribute it and/or  modify it
  * under the terms of the GNU General Public License  as  published  by the
@@ -17,7 +17,7 @@
  * General Public License, write to the Free Software Foundation, Inc., 675
  * Mass Ave, Cambridge, MA 02139, USA).
  *
-*/   
+*/
 
 
 
@@ -46,10 +46,10 @@ func chk_bilinear(void)
     if (max(_(xs,ys)+sdim-1) > dim) continue;
     im(xs:xs+sdim-1,ys:ys+sdim-1) += star/(0.01+random());
   }
-  
+
   //  im = float(jpeg_read("polarbear.jpg"))(sum,,)(,::-1);
   //  palette,"gray.gp";
-  
+
   time = 100;
   // tests of speed:
   xi=1; yi=1; dim=100; nreb=2;
@@ -74,7 +74,7 @@ func chk_bilinear(void)
   if (allof(sim == bilinear(sim,1))) {
     write,"Checking that bilinear(im,1) = im ... Yes";
   } else { error,"bilinear(im,1) != im"; }
-  
+
   //displays and check of functionalities:
   xi=50; yi=200; dim=200;
   //  xi=220; yi=300; dim=200;
@@ -144,7 +144,7 @@ func chk_bilinear(void)
   animate,0;
   //pause,time;
 
-  
+
 }
 
 func chk_spline2(void)
@@ -170,7 +170,7 @@ func chk_spline2(void)
 
   //  im = float(jpeg_read("polarbear.jpg"))(sum,,)(,::-1);
   //  palette,"gray.gp";
-  
+
   time = 100;
   // tests of speed:
   xi=1; yi=1; dim=100; nreb=2;
@@ -195,7 +195,7 @@ func chk_spline2(void)
   if (allof(sim == spline2(sim,1))) {
     write,"Checking that spline2(im,1) = im ... Yes";
   } else { error,"spline2(im,1) != im"; }
-  
+
   //displays and check of functionalities:
   xi=50; yi=200; dim=200;
   //  xi=220; yi=300; dim=200;
@@ -266,7 +266,7 @@ func chk_spline2(void)
   animate,0;
   //pause,time;
 
-  
+
 }
 
 window,wait=1;

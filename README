@@ -1,7 +1,7 @@
 imutil plugin for Yorick:
-F.Rigaut, Nov2004.
+Copyright F.Rigaut, 2004-2011
 see file imutil.i for more details.
-version 0.5.6
+version 0.5.7
 
 1. Content:
 
@@ -75,10 +75,10 @@ Y_HOME/lib and the imutil_start.i in Y_SITE/i-start
 2005aug24 v0.2.1: added mask= keyword in spline2 to enable
 		  invalid data point in input array.
 
-2005may18 v0.2  : Worked on compatibility with 64 bits. 
+2005may18 v0.2  : Worked on compatibility with 64 bits.
 		  Check API for int/long mix up. Corrected a few.
 
-21Nov2004	removed a call to img_read to read test image 
+21Nov2004	removed a call to img_read to read test image
 		(introduced dependency), replaced by a restore.
 
 Nov2004		creation.

@@ -1,7 +1,6 @@
 /* imutil Yorick plugin
  * $Id$
- * Francois Rigaut, 2003-2005
- * last revision/addition: 2007jun14
+ * Francois Rigaut, 2003-2011
  *
  * Copyright (c) 2003, Francois RIGAUT (frigaut@gemini.edu, Gemini
  * Observatory, 670 N A'Ohoku Place, HILO HI-96720).
@@ -22,7 +21,7 @@
  *
 */
 
-plug_in, "imutil";
+plug_in,"imutil";
 require,"util_fr.i";
 
 //func is_scalar(x) { return (is_array(x) && ! dimsof(x)(1)); }
@@ -32,14 +31,14 @@ require,"util_fr.i";
 func cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,splin=,outside=)
 /* DOCUMENT cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,
                      splin=,outside=)
-	
+
    Cartesian to Polar coordinate coordinate mapping
 
    image : input image, in cartesian coorindate (square grid)
-	
+
    optional output: r: 1D vector to hold the r coordinates at
    which output image is mapped theta: same for theta
-	
+
    KEYWORDS:
    xc, yc: Center for coordinate transform. Note that this is
    compatible with the center defined by dist(), or rotate2(), but is
@@ -68,13 +67,13 @@ func cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,splin=,outside=)
   if (!nr) nr = long(ceil(tor)+1); else nr=long(nr);
   r     = array(1.,ntheta)(-,)*span(0.,tor,nr);
   theta = span(0.,2*pi,ntheta+1)(1:-1)(-,)*array(1.,nr);
-  
+
   x = r*cos(theta)+xc;
   y = r*sin(theta)+yc;
-  
+
   r = r(,1);
   theta = theta(1,);
-  
+
   if (splin) return spline2(image,x,y,outside=outside);
   return bilinear(image,x,y,outside=outside);
 }
@@ -101,20 +100,20 @@ func rotate2(image,angle,xc=,yc=,splin=,outside=)
 */
 {
   angle *= pi/180.;
-  
+
   d = dimsof(image);
-  
+
   xy = indices(d);
-  
+
   if (xc==[]) xc=ceil(d(2)/2.+0.5);
   if (yc==[]) yc=ceil(d(3)/2.+0.5);
-  
+
   xy(,,1)-=xc;
   xy(,,2)-=yc;
 
   x =  cos(angle)*xy(,,1) + sin(angle)*xy(,,2);
   y = -sin(angle)*xy(,,1) + cos(angle)*xy(,,2);
-  
+
   x +=xc;
   y +=yc;
 
@@ -137,11 +136,11 @@ func bin2d(in,binfact)
  */
 
 {
-  if ( (binfact-long(binfact)) != 0) write,"*** Warning: binfact has to be an int"; 
+  if ( (binfact-long(binfact)) != 0) write,"*** Warning: binfact has to be an int";
   if (binfact<1) error,"binfact has to be >= 1";
 
   binfact = int(binfact); // this *has* to be a int.
-  
+
   nx = int(dimsof(in)(2));
   ny = int(dimsof(in)(3));
   fx = int(ceil(nx/float(binfact)));
@@ -149,7 +148,7 @@ func bin2d(in,binfact)
 
   // Test type of array and call appropriate routine
   if (typeof(in) == "int") in=long(in);
-  
+
   if (typeof(in) == "long") {
 
     // define/allocate output image
@@ -172,7 +171,7 @@ func bin2d(in,binfact)
     return outData;
 
   } else { error,"Unsupported Data Type"; }
-  
+
 }
 
 
@@ -209,7 +208,7 @@ func clip(inarray,xmin,xmax)
  * Returns the argument, which has been "clipped" to mini
  * and maxi, i.e. in which all elements lower than "mini"
  * have been replaced by "mini" and all elements greater
- * than "maxi" by "maxi". 
+ * than "maxi" by "maxi".
  * Either "mini" and "maxi" can be ommited, in which case
  * the corresponding mini or maxi is not clipped.
  * Equivalent to the IDL ">" and "<" operators.
@@ -332,10 +331,10 @@ func eclat(image)
 
 {
   local x;
-  
+
   nx = int(dimsof(image)(2));
   ny = int(dimsof(image)(3));  //fixed 2->3 may18, 2005.
-  
+
 
   sub = am_subroutine();
   if (sub) {eq_nocopy,x,image;} else {x = image;}
@@ -398,7 +397,7 @@ func gaussdev(dims)
 
 func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
 /* DOCUMENT spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
-  
+
   Interpolate regularly sampled 2D arrays using 2D spline.
 
         spline2(image,nrebin)
@@ -415,7 +414,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
     Returns interpolated image
     Output dimension = dimx * dimy
     The whole image is interpolated
-    
+
   spline2(image,x,y,grix=1)
     Returns interpolated image on a grid of points specified
     by the coordinates x & y. The output is a 2D array
@@ -436,7 +435,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
   NOTE on the input coordinates: In the input image, the lower
   left pixel has coordinates [xin(1),yin(1)]=[1,1]. Pixels are
   spaced by one unit, so [xin(2),yin(1)]=[2,1],...
-    
+
   KEYWORD minus_one specify that the last column/row should not
   be extrapolated, i.e. the output image extend from xin(1) to
   xin(0) inclusive, not beyond (same for y).
@@ -445,7 +444,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
   are invalid and not to be used to compute the output image.
   Bad pixel can be interpolated using mask. Mask is an array
   of same dimension as image. 0 mark an invalid data point.
-  
+
   EXAMPLES: if "image" is a 512x512 image:
 
   spline2(image,2) returns image interpolated on a 1024x1024 grid
@@ -459,7 +458,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
 
   spline2(image,[300.3],[200.4]) returns the interpolation of image
   at point [300.3,200.4]
-  
+
   spline2(image,indgen(512),indgen(512)) returns a vector of values
   interpolated at [x,y] = [[1,1],[2,2],...,[512,512]]
 
@@ -538,7 +537,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
   xin = xin(wm);
   image = image(wm);
   wm = [];
-  
+
   _splie2,xin,image,nx,ny,deriv,nvalidx;
 
   if (_s2gen) {
@@ -550,7 +549,7 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
       _mask = where((xreb>xin(0))|(xreb<xin(1))|(yreb>yin(0))|(yreb<yin(1)));
       if (numberof(_mask)) res(_mask) = outside;
     }
-    
+
   } else {
 
     res = array(float,[2,nxreb,nyreb]);
@@ -564,14 +563,14 @@ func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
     }
 
   }
-  
+
   return res;
 }
 
 
 func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
 /* DOCUMENT bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
-  
+
   Interpolate regularly sampled 2D arrays using bilinear interpolation.
 
         bilinear(image,nrebin)
@@ -588,7 +587,7 @@ func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
     Returns interpolated image
     Output dimension = dimx * dimy
     The whole image is interpolated
-    
+
   bilinear(image,x,y,grix=1)
     Returns interpolated image on a grid of points specified
     by the coordinates x & y. The output is a 2D array
@@ -601,12 +600,12 @@ func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
     confusion with the second form, e.g. bilinear(im,[245.34],[45.3])),
     vectors (for instance along a line of circle) or can be 2D
     array to specify an arbitrary transform (e.g. a rotation).
-    This is the general form of bilinear. 
+    This is the general form of bilinear.
 
   NOTE on the input coordinates: In the input image, the lower
   left pixel has coordinates [xin(1),yin(1)]=[1,1]. Pixels are
   spaced by one unit, so [xin(2),yin(1)]=[2,1],...
-    
+
   KEYWORD minus_one specify that the last column/row should not
   be extrapolated, i.e. the output image extend from xin(1) to
   xin(0) inclusive, not beyond (same for y).
@@ -624,7 +623,7 @@ func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
 
   bilinear(image,[300.3],[200.4]) returns the interpolation of image
   at point [300.3,200.4]
-  
+
   bilinear(image,indgen(512),indgen(512)) returns a vector of values
   interpolated at [x,y] = [[1,1],[2,2],...,[512,512]]
 
@@ -650,7 +649,7 @@ func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
     skipoutside=1l;
     outside = float(outside);
   }
-    
+
   d = dimsof(image);
   if (d(1)!=2) error,"2D array only";
   nx = d(2);
@@ -691,11 +690,11 @@ func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
     xreb = xreb*array(1.f,nyreb)(-,);
     yreb = array(1.f,nxreb)*yreb(-,);
   }
-  
+
   res = array(outside,dimsof(xreb));
-  
+
   _bilinear,image,nx,ny,res,xreb,yreb,numberof(xreb),skipoutside;
-  
+
   return res;
 }
 
@@ -750,7 +749,7 @@ func sedgemedian(vec)
   x = x(1:-1);
   len = numberof(x);
   if (len%2) {
-    //odd# of elements. 
+    //odd# of elements.
     return x(len/2+1)+xmin;
   } else {
     //even# of elements. must return avg value of middle elements

@@ -3,7 +3,7 @@ Kind: plugin
 Version: 0.5.7
 Revision: 1
 Description: Utilitaries for image manipulation
-License: BSD
+License: GPLv2
 Author: Francois Rigaut
 Maintainer: Francois Rigaut <frigaut@users.sourceforge.net>
 OS:
@@ -73,7 +73,7 @@ make install
 The install puts imutil.i in Y_SITE/i, the imutil.so library in
 Y_HOME/lib and the imutil_start.i in Y_SITE/i-start
 
-See contrib/imutil/check.i for a test suite. Type 
+See contrib/imutil/check.i for a test suite. Type
 "yorick -batch check.i" (in this directory) in a terminal to run it.
 
 <<
@@ -92,9 +92,9 @@ History:
 2005nov08 v0.2.2: fixed local x in sedgesort
 2005aug24 v0.2.1: added mask= keyword in spline2 to enable
 		  invalid data point in input array.
-2005may18 v0.2  : Worked on compatibility with 64 bits. 
+2005may18 v0.2  : Worked on compatibility with 64 bits.
 		  Check API for int/long mix up. Corrected a few.
-21Nov2004	removed a call to img_read to read test image 
+21Nov2004	removed a call to img_read to read test image
 		(introduced dependency), replaced by a restore.
 Nov2004		creation.
 

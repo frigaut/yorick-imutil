@@ -1,11 +1,11 @@
 /*
  * Author: Francois Rigaut
- * 
+ *
  * This file contains a number of utility functions, coded in C to gain
  * execution time. It addresses functionalities that are missing in
  * yorick, mostly concerning 2D image processing.
- * 
- * Copyright (c) 2003-2007, Francois Rigaut
+ *
+ * Copyright (c) 2003-2011, Francois Rigaut
  *
  * This program is free software; you can redistribute it and/or  modify it
  * under the terms of the GNU General Public License  as  published  by the
@@ -19,10 +19,10 @@
  * General Public License, write to the Free Software Foundation, Inc., 675
  * Mass Ave, Cambridge, MA 02139, USA).
  *
- */   
+ */
 
 
-void 
+void
 _bilinear(float *image, long nx, long ny,
 	  float *out, float *xout, float *yout, long nout, long skipoutside)
 
@@ -60,7 +60,7 @@ _bilinear(float *image, long nx, long ny,
     /* Computes the weights for the 4 surrounding pixels */
     wi = 1.0f-(xout[i]-(long)(xout[i]));
     wj = 1.0f-(yout[i]-(long)(yout[i]));
-    
+
     w00 = wi*wj;
     w10 = (1-wi)*wj;
     w01 = wi*(1-wj);

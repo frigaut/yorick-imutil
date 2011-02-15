@@ -1,11 +1,11 @@
 /*
  * Author: Francois Rigaut
- * 
+ *
  * This file contains a number of utility functions, coded in C to gain
  * execution time. It addresses functionalities that are missing in
  * yorick, mostly concerning 2D image processing.
- * 
- * Copyright (c) 2003-2007, Francois Rigaut
+ *
+ * Copyright (c) 2003-2011, Francois Rigaut
  *
  * This program is free software; you can redistribute it and/or  modify it
  * under the terms of the GNU General Public License  as  published  by the
@@ -19,7 +19,7 @@
  * General Public License, write to the Free Software Foundation, Inc., 675
  * Mass Ave, Cambridge, MA 02139, USA).
  *
- */   
+ */
 
 
 #include <math.h>
@@ -194,7 +194,7 @@ void _eclat_double(double *ar, int nx, int ny)
 /************************************************************************
  * Function _dist                                                       *
  * returns a 2D array which element's values contain the distance to    *
- * the point of coordinates (xc,yc).                                    * 
+ * the point of coordinates (xc,yc).                                    *
  * Called by dist() in yorickfr.i                                       *
  * Last modified: December 15, 2003.                                    *
  * Author: F.Rigaut                                                     *
@@ -208,7 +208,7 @@ void _dist(float *d, long dimx, long dimy, float xc, float yc)
   /* Loop and fill d with distance values */
   for (i=0;i<dimx;++i) {
     for (j=0;j<dimy;++j) {
-      d[i + j * dimx] = (float)sqrt( (xc-(float)i) * (xc-(float)i) + 
+      d[i + j * dimx] = (float)sqrt( (xc-(float)i) * (xc-(float)i) +
 			 	     (yc-(float)j) * (yc-(float)j) );
     }
   }
@@ -415,92 +415,92 @@ float ran1()
 void _poidev(float *xmv, long n)
 /* all floats -> doubles on June 2010 to avoid SIGFPE
    for too large input values */
-{ 
-  double gammln(double xx); 
+{
+  double gammln(double xx);
   /*  float ran1(long *idum);*/
-  static double sq,alxm,g,oldm=(-1.0); 
-  double xm,em,t,y,y1; 
+  static double sq,alxm,g,oldm=(-1.0);
+  double xm,em,t,y,y1;
   long i;
 
   for (i=0;i<n;i++) {
     xm = (double)xmv[i];
     if (xm == 0.0f) continue;
-    if (xm < 20.0) { /* Use direct method. */ 
-      if (xm != oldm) { 
-	oldm=xm; 
-	g=exp(-xm);  /* If xm is new, compute the exponential. */
-      } 
-      em = -1; 
-      t=1.0; 
-      do { 
-	++em; 
-	t *= ran1(); 
-      } while (t > g);
-    } else {  /* Use rejection method. */ 
-      if (xm != oldm) { 
+    if (xm < 20.0) { /* Use direct method. */
+      if (xm != oldm) {
 	oldm=xm;
-	sq=sqrt(2.0*xm); 
-	alxm=log(xm); 
-	g=xm*alxm-gammln(xm+1.0); 
-      } 
-      do { 
-	do { 
+	g=exp(-xm);  /* If xm is new, compute the exponential. */
+      }
+      em = -1;
+      t=1.0;
+      do {
+	++em;
+	t *= ran1();
+      } while (t > g);
+    } else {  /* Use rejection method. */
+      if (xm != oldm) {
+	oldm=xm;
+	sq=sqrt(2.0*xm);
+	alxm=log(xm);
+	g=xm*alxm-gammln(xm+1.0);
+      }
+      do {
+	do {
 	  y=tan(3.1415926535897932384626433832*ran1());
-	  em=sq*y+xm; 
-	} while (em < 0.0); 
-	em=floor(em); 
-	t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g); 
-      } while (ran1() > t); 
-    } 
+	  em=sq*y+xm;
+	} while (em < 0.0);
+	em=floor(em);
+	t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g);
+      } while (ran1() > t);
+    }
     xmv[i] = (float)em;
   }
-} 
+}
 
 
-double gammln(double xx) 
-{ 
+double gammln(double xx)
+{
   /* Returns the value ln[?(xx)] for xx>0. */
-  double x,y,tmp,ser; 
+  double x,y,tmp,ser;
   static double cof[6]={76.18009172947146,-86.50532032941677,
-			24.01409824083091,-1.231739572450155, 
-			0.1208650973866179e-2,-0.5395239384953e-5}; 
-  int j; 
+			24.01409824083091,-1.231739572450155,
+			0.1208650973866179e-2,-0.5395239384953e-5};
+  int j;
 
-  y=x=xx; 
-  tmp=x+5.5; 
-  tmp -= (x+0.5)*log(tmp); 
-  ser=1.000000000190015; 
-  for (j=0;j<=5;j++) ser += cof[j]/++y; 
-  return -tmp+log(2.5066282746310005*ser/x); 
-} 
+  y=x=xx;
+  tmp=x+5.5;
+  tmp -= (x+0.5)*log(tmp);
+  ser=1.000000000190015;
+  for (j=0;j<=5;j++) ser += cof[j]/++y;
+  return -tmp+log(2.5066282746310005*ser/x);
+}
 
 
 void _gaussdev(float *xmv, long n)
-{ 
-  /* Returns a normally distributed deviate with zero mean and unit variance, 
-     using ran1() as the source of uniform deviates. */ 
+{
+  /* Returns a normally distributed deviate with zero mean and unit variance,
+     using ran1() as the source of uniform deviates. */
 
   /*  float ran1(long *idum); */
-  static int iset=0; 
-  static float gset; 
-  float fac,rsq,v1,v2; 
+  static int iset=0;
+  static float gset;
+  float fac,rsq,v1,v2;
   long i;
 
   for (i=0;i<n;i++) {
-    if (iset == 0) { 
-      do { 
-	v1=2.0*ran1()-1.0; 
-	v2=2.0*ran1()-1.0; 
+    if (iset == 0) {
+      do {
+	v1=2.0*ran1()-1.0;
+	v2=2.0*ran1()-1.0;
 	rsq=v1*v1+v2*v2;
-      } while (rsq >= 1.0 || rsq == 0.0); 
-      fac=sqrt(-2.0*log(rsq)/rsq); 
-      gset=v1*fac; 
-      iset=1; 
-      xmv[i] = v2*fac; 
-    } else { 
-      iset=0; 
-      xmv[i] = gset; 
-    } 
+      } while (rsq >= 1.0 || rsq == 0.0);
+      fac=sqrt(-2.0*log(rsq)/rsq);
+      gset=v1*fac;
+      iset=1;
+      xmv[i] = v2*fac;
+    } else {
+      iset=0;
+      xmv[i] = gset;
+    }
   }
-} 
+}
 
