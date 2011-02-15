@@ -1,0 +1,84 @@
+imutil plugin for Yorick:
+F.Rigaut, Nov2004.
+see file imutil.i for more details.
+version 0.5.6
+
+1. Content:
+
+This plugin includes the following functions:
+
+func bilinear(image,arg1,arg2,grid=,minus_one=,outside=)
+	bilinear interpolation on 2D arrays
+
+func spline2(image,arg1,arg2,grid=,minus_one=,outside=,mask=)
+	2D spline interpolation on 2d arrays
+
+func bin2d(in,binfact)
+	resampling by neighbor averaging (binning)
+
+func cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,splin=,outside=)
+	cartesian to polar coordinate mapping
+
+func clip(inarray,xmin,xmax)
+	set min and max of array to said values
+
+func dist(dim,xc=,yc=)
+	generate euclidian distance map
+
+func eclat(image)
+	quadrant swap "a la FFT"
+
+func gaussdev(dims)
+	generate random array with Gaussian statistic
+
+func poidev(vec)
+	compute poisson statistic of input array
+
+func rotate2(image,angle,xc=,yc=,splin=,outside=)
+	rotate 2D array using bilinear() or spline2()
+
+func sedgesort(vec)
+	sort input vector
+
+func sedgemedian(vec)
+	find median of input vector
+
+func cpc(im,fmin,fmax)
+	return image clipped at fmin (fraction) and fmax.
+
+2. Installation from source:
+
+see installation instructions in Makefile.
+Basically, you will need a C compiler and make/gnumake.
+You need yorick in your executable path.
+
+yorick -batch make.i
+make
+make check
+make install
+
+
+The install puts imutil.i in Y_SITE/i, the imutil.so library in
+Y_HOME/lib and the imutil_start.i in Y_SITE/i-start
+
+
+3. History:
+
+2010dec21 v0.5.7: modified Makefile for osx to create staticlib
+                  for linking with yao.
+2010jun17 v0.5.6: poidev internals now use doubles
+2010apr14 v0.5.5: Thibaut patch for round
+2008mar10 v0.5.4: Added support for char, short, int in clip()
+2005dec09 v0.5.1: updated the documents, README and info file.
+2005dec01 v0.5  : bumped up to v0.5
+2005nov08 v0.2.2: fixed local x in sedgesort
+2005aug24 v0.2.1: added mask= keyword in spline2 to enable
+		  invalid data point in input array.
+
+2005may18 v0.2  : Worked on compatibility with 64 bits. 
+		  Check API for int/long mix up. Corrected a few.
+
+21Nov2004	removed a call to img_read to read test image 
+		(introduced dependency), replaced by a restore.
+
+Nov2004		creation.
