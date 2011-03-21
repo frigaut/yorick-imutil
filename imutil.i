@@ -24,6 +24,8 @@
 plug_in,"imutil";
 require,"util_fr.i";
 
+IMUTIL_VERSION = "0.6.0";
+
 //func is_scalar(x) { return (is_array(x) && ! dimsof(x)(1)); }
 //func is_vector(x) { return (is_array(x) && dimsof(x)(1) == 1); }
 

@@ -1,6 +1,6 @@
 Package: imutil
 Kind: plugin
-Version: 0.5.7
+Version: 0.6.0
 Revision: 1
 Description: Utilitaries for image manipulation
 License: GPLv2

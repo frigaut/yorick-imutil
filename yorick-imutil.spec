@@ -1,5 +1,5 @@
 %define name yorick-imutil
-%define version 0.5.7
+%define version 0.6.0
 %define release gemini2008apr29
 
 Summary: yorick library for image manipulation
@@ -34,7 +34,7 @@ make
 if [ -f check.i ] ; then
    mv check.i %{name}_check.i
 fi;
-  
+
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/lib/yorick/lib
