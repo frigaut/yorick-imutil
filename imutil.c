@@ -34,6 +34,72 @@ int _mynoop1()
   return (0);
 }
 
+void _dpc(float *ima, short *gpm, long *w, long *w2, long stride, long npix, long nw, long npassmax)
+{
+  long i,k,n,npass;
+  float val;
+
+  npass = 0;
+
+  while (nw && (npass<npassmax)) {
+
+    for (i=0;i<nw;i++) {
+      val = 0.0f;
+      n = 0l;
+      w2[i] = 0l;
+      k = w[i]-1;      if ((k>=0)&&(k<npix)&&(gpm[k])) { val += ima[k]; n++; }
+      k = w[i]+1;      if ((k>=0)&&(k<npix)&&(gpm[k])) { val += ima[k]; n++; }
+      k = w[i]-stride; if ((k>=0)&&(k<npix)&&(gpm[k])) { val += ima[k]; n++; }
+      k = w[i]+stride; if ((k>=0)&&(k<npix)&&(gpm[k])) { val += ima[k]; n++; }
+      if (n) {
+        // fill in corrected value in image:
+        ima[w[i]] = val/(float)n;
+        // mark the pixel as processed:
+        w2[i] = 1;
+      }
+    }
+    k = 0;
+    for (i=0;i<nw;i++) {
+      if (w2[i]) { // pixel has been processed:
+        gpm[w[i]] = 1;
+      } else { // pixel is still bad:
+        w[k++] = w[i];
+      }
+    }
+    nw = k;
+    npass++;
+  }
+}
+
+void _sigfil(float *ima, short *bpm, float nsigma, long stride, long npix)
+{
+  long i,k,n;
+  float avg1,avg2,val,std;
+
+  for (i=0;i<npix;i++) {
+    avg1 = avg2 = 0.0f;
+    n = 0;
+    // compute the avg and rms in a 3x3 box centered on pixel
+    // k = i; avg1=ima[k]; avg2=ima[k]*ima[k]; n++;
+    k = i-1;        if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i+1;        if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i-stride;   if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i-stride-1; if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i-stride+1; if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i+stride;   if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i+stride-1; if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    k = i+stride+1; if ((k>=0)&&(k<npix)) { avg1+=ima[k]; avg2+=ima[k]*ima[k]; n++; }
+    avg1 = avg1 / (float)n;
+    avg2 = avg2 / (float)n;
+    std  = avg2 - avg1 * avg1;
+    if (std<0.) std=0.0f;
+    else std = sqrtf(std);
+    val = fabsf(ima[i]-avg1);
+    // printf("ima=%f val=%f avg1=%f, avg2=%f, std=%f nsigma=%f\n",ima[i],val,avg1,avg2,std,nsigma);
+    if (val>(nsigma*std)) bpm[i]=1; else bpm[i]=0;
+  }
+}
+
 /************************************************************************
  * Functions _bin2d                                                     *
  * Returns the input image, rebinned with the specified binning factor  *

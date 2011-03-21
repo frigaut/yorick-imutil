@@ -27,6 +27,78 @@ require,"util_fr.i";
 //func is_scalar(x) { return (is_array(x) && ! dimsof(x)(1)); }
 //func is_vector(x) { return (is_array(x) && dimsof(x)(1) == 1); }
 
+func dpc(image,badpixmap,silent=)
+/* DOCUMENT dpc(image,badpixmap,silent=)
+  *Correction of bad pixels in an image by averaging the (good) neighbors.
+ * Dead pixel correction.
+ * image     : image to process
+ * badpixmap : bad pixel map (same dimension as image). 1 means bad pixel.
+ * silent      be silent. Default is to write out # of pixels to process.
+ * F.Rigaut 2011/03/16
+ * SEE ALSO: deadpix() from yorick-yutils. This function superseeds deadpix()
+ * and is several order of magnitudes faster.
+ */
+{
+  // the bad pixels we replace are going to be approximate, so float is enough
+  ima    = float(image);
+  gpm    = short(1-badpixmap);
+  w0     = where(badpixmap);
+  if (numberof(w0)==0) return image;
+  w      = w0-1; // -1 = yorick 1-based vs C 0-based
+  w      = long(w);
+  w2     = w*0;
+  stride = long(dimsof(ima)(2));
+  npix   = long(numberof(ima));
+  nw     = long(numberof(w));
+  if (!silent) write,format="dpc: %d dead pixels to process...",nw;
+  tic,9;
+  npassmax = 100l;
+  _dpc,&ima,&gpm,&w,&w2,stride,npix,nw,npassmax;
+  image(w0) = ima(w0); // will be cast automatically
+  if (!silent) write,format="Done (%.3fs)\n",tac(9);
+  return image;
+}
+if (is_func(deadpix)) deadpix=dpc;
+
+
+func sigfil(image,nsigma,iter=,silent=)
+/* DOCUMENT func sigfil(image,nsigma,iter=,silent=)
+   Filter out the pixels that deviate from the local statistics.
+   The mean and rms of the 8 (the minimum and maximum of these
+   8 neighbors are excluded in the mean and rms computation) is
+   computed. All pixels that deviates more than "nsigma" rms
+   from the mean are flagged as bad pixels. The image and newly
+   created bad pixel map are passed to the routine dpc()
+   for correction. The processus can be iterated.
+   image	: input image
+   nsigma: number of rms about the local mean out of which is
+   pixel is considered aberrant. nsigma >= 5 recommended.
+   iter  : Keyword, number of iterations. Recommended value : 3-5
+   silent: No verbose
+   F.Rigaut 2011/03/16
+   This function superseeds sigmaFilter from yorick-yutils
+   SEE ALSO: dpc
+  */
+{
+  if (!iter) iter=100;
+  ima    = float(image);
+  stride = long(dimsof(ima)(2));
+  npix   = long(numberof(ima));
+  abpm   = array(short,dimsof(ima));
+  do {
+    bpm    = array(short,dimsof(ima));
+    _sigfil,&ima,&bpm,float(nsigma),stride,npix;
+    abpm += bpm;
+    nbp = sum(bpm);
+    ima = dpc(ima,bpm,silent=silent);
+    iter--;
+  } while ((nbp)&&(iter>0));
+  w = where(abpm);
+  if (numberof(w)) image(w) = ima(w);
+  return image;
+}
+if (is_func(sigmaFilter)) sigmaFilter=sigfil;
+
 
 func cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,splin=,outside=)
 /* DOCUMENT cart2pol(image,&r,&theta,xc=,yc=,ntheta=,nr=,tor=,
@@ -781,6 +853,16 @@ func cpc(im,fmin,fmax)
   return clip(im,x1,x2);
 }
 
+
+extern _dpc
+/* PROTOTYPE
+   void _dpc(pointer im, pointer gpm, pointer w, pointer w2, long stride, long npix, long nw, long npassmax)
+*/
+
+extern _sigfil
+/* PROTOTYPE
+   void _sigfil(pointer im, pointer bpm, float nsigma, long stride, long npix)
+*/
 
 extern _bin2d_long
 /* PROTOTYPE
