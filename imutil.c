@@ -25,6 +25,9 @@
 #include <math.h>
 #include <stdio.h>
 
+void srandom(unsigned seed);
+
+
 /************************************************************************
  * noop. For testing and timing.                                        *
  ************************************************************************/
@@ -121,11 +124,11 @@ int _bin2d_long(long *in, int nx, int ny, long *out, int fx, int fy, int binfact
   for ( i1=0 ; i1<fx ; i1++ ) {
     for ( j1=0 ; j1<fy ; j1++ ) {
       for ( i2=0 ; i2<binfact ; i2++ ) {
-	for ( j2=0 ; j2<binfact ; j2++ ) {
-	  i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
-	  j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
-	  out[i1+j1*fx] += in[i+j*nx];
-	}
+  for ( j2=0 ; j2<binfact ; j2++ ) {
+    i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
+    j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
+    out[i1+j1*fx] += in[i+j*nx];
+  }
       }
     }
   }
@@ -141,11 +144,11 @@ int _bin2d_float(float *in, int nx, int ny, float *out, int fx, int fy, int binf
   for ( i1=0 ; i1<fx ; i1++ ) {
     for ( j1=0 ; j1<fy ; j1++ ) {
       for ( i2=0 ; i2<binfact ; i2++ ) {
-	for ( j2=0 ; j2<binfact ; j2++ ) {
-	  i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
-	  j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
-	  out[i1+j1*fx] += in[i+j*nx];
-	}
+  for ( j2=0 ; j2<binfact ; j2++ ) {
+    i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
+    j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
+    out[i1+j1*fx] += in[i+j*nx];
+  }
       }
     }
   }
@@ -161,11 +164,11 @@ int _bin2d_double(double *in, int nx, int ny, double *out, int fx, int fy, int b
   for ( i1=0 ; i1<fx ; i1++ ) {
     for ( j1=0 ; j1<fy ; j1++ ) {
       for ( i2=0 ; i2<binfact ; i2++ ) {
-	for ( j2=0 ; j2<binfact ; j2++ ) {
-	  i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
-	  j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
-	  out[i1+j1*fx] += in[i+j*nx];
-	}
+  for ( j2=0 ; j2<binfact ; j2++ ) {
+    i = i1*binfact+i2; if ( i>=nx ) { i=nx-1;}
+    j = j1*binfact+j2; if ( j>=ny ) { j=ny-1;}
+    out[i1+j1*fx] += in[i+j*nx];
+  }
       }
     }
   }
@@ -275,7 +278,7 @@ void _dist(float *d, long dimx, long dimy, float xc, float yc)
   for (i=0;i<dimx;++i) {
     for (j=0;j<dimy;++j) {
       d[i + j * dimx] = (float)sqrt( (xc-(float)i) * (xc-(float)i) +
-			 	     (yc-(float)j) * (yc-(float)j) );
+             (yc-(float)j) * (yc-(float)j) );
     }
   }
 }
@@ -465,9 +468,9 @@ int clipmaxdouble(double *x, double xmax, long n)
   return (0);
 }
 
-void ran1init()
+void _ran1init(long n)
 {
-  srandom();  /* WARNING! this might be platform specific */
+  srandom(n);
 }
 
 float ran1()
@@ -493,29 +496,32 @@ void _poidev(float *xmv, long n)
     if (xm == 0.0f) continue;
     if (xm < 20.0) { /* Use direct method. */
       if (xm != oldm) {
-	oldm=xm;
-	g=exp(-xm);  /* If xm is new, compute the exponential. */
+        oldm=xm;
+        g=exp(-xm);  /* If xm is new, compute the exponential. */
       }
       em = -1;
       t=1.0;
       do {
-	++em;
-	t *= ran1();
+        ++em;
+        t *= ran1();
       } while (t > g);
     } else {  /* Use rejection method. */
       if (xm != oldm) {
-	oldm=xm;
-	sq=sqrt(2.0*xm);
-	alxm=log(xm);
-	g=xm*alxm-gammln(xm+1.0);
+        oldm=xm;
+        sq=sqrt(2.0*xm);
+        alxm=log(xm);
+        // printf("xm+1.0 = %.f gammln(xm+1.0) = %.f\n",xm+1.0,gammln(xm+1.0));
+        g=xm*alxm-gammln(xm+1.0);
       }
       do {
-	do {
-	  y=tan(3.1415926535897932384626433832*ran1());
-	  em=sq*y+xm;
-	} while (em < 0.0);
-	em=floor(em);
-	t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g);
+        do {
+          y=tan(3.1415926535897932384626433832*ran1());
+          em=sq*y+xm;
+        } while (em < 0.0);
+        em=floor(em);
+        // printf("em+1.0 = %.f gammln(em+1.0) = %.f\n",em+1.0,gammln(em+1.0));
+        // printf("exp(em*alxm-gammln(em+1.0)-g) = %.f\n",exp(em*alxm-gammln(em+1.0)-g));
+        t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g);
       } while (ran1() > t);
     }
     xmv[i] = (float)em;
@@ -528,8 +534,8 @@ double gammln(double xx)
   /* Returns the value ln[?(xx)] for xx>0. */
   double x,y,tmp,ser;
   static double cof[6]={76.18009172947146,-86.50532032941677,
-			24.01409824083091,-1.231739572450155,
-			0.1208650973866179e-2,-0.5395239384953e-5};
+      24.01409824083091,-1.231739572450155,
+      0.1208650973866179e-2,-0.5395239384953e-5};
   int j;
 
   y=x=xx;
@@ -555,9 +561,9 @@ void _gaussdev(float *xmv, long n)
   for (i=0;i<n;i++) {
     if (iset == 0) {
       do {
-	v1=2.0*ran1()-1.0;
-	v2=2.0*ran1()-1.0;
-	rsq=v1*v1+v2*v2;
+  v1=2.0*ran1()-1.0;
+  v2=2.0*ran1()-1.0;
+  rsq=v1*v1+v2*v2;
       } while (rsq >= 1.0 || rsq == 0.0);
       fac=sqrt(-2.0*log(rsq)/rsq);
       gset=v1*fac;

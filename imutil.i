@@ -425,6 +425,11 @@ func eclat(image)
 }
 
 
+func ran1init(seed)
+{
+  if (seed==[]) seed=1;
+  _ran1init,seed;
+}
 
 func poidev(vec)
 /* DOCUMENT func poidev(vec)
@@ -1006,9 +1011,9 @@ extern _poidev
    void _poidev(float array xm, long n)
 */
 
-extern ran1init
+extern _ran1init
 /* PROTOTYPE
-   void ran1init(void)
+   void _ran1init(long n)
 */
 
 extern _spline2grid
