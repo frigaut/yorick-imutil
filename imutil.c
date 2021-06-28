@@ -26,7 +26,9 @@
 #include <stdio.h>
 
 void srandom(unsigned seed);
-
+#ifdef __APPLE__
+long random(void);
+#endif
 
 /************************************************************************
  * noop. For testing and timing.                                        *
