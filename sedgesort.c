@@ -19,13 +19,13 @@
 #include	<stdio.h>
 #include	"sort.h"
 
-#ifdef __APPLE__
+// #ifdef __APPLE__
 void  insort_long (long *array, int len);
 void  insort_float (float *array, int len);
 void  insort_double (double *array, int len);
 void  insort_short (short *array, int len);
-#endif
-/*------------------------------------------------------------------- 
+// #endif
+/*-------------------------------------------------------------------
  *		  This file shouldn't be touched.
  *	     For customizable parameters, see 'sort.h'
  *-----------------------------------------------------------------*/
@@ -208,4 +208,3 @@ register int    len;
     partial_quickersort_short (array, 0, len - 1);
     insort_short (array, len);
 }
-

@@ -26,9 +26,9 @@
 #include <stdio.h>
 
 void srandom(unsigned seed);
-#ifdef __APPLE__
+// #ifdef __APPLE__
 long random(void);
-#endif
+// #endif
 
 /************************************************************************
  * noop. For testing and timing.                                        *
@@ -577,4 +577,3 @@ void _gaussdev(float *xmv, long n)
     }
   }
 }
-
